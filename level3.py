@@ -3,6 +3,10 @@
 import os.path
 import urllib2
 
+import re
+
+PRICE_PATTERN = '.*(R\$ [0-9]+\.?[0-9]+,[0-9]+).*'
+
 def set_up_cookie_stuff():
     COOKIEFILE = './cookies.txt'
 
@@ -37,7 +41,7 @@ def set_up_cookie_stuff():
             opener = ClientCookie.build_opener(ClientCookie.HTTPCookieProcessor(cj))
             ClientCookie.install_opener(opener)
 
-def main():
+def get_page_content_level3():
 
     set_up_cookie_stuff()
 
@@ -56,8 +60,16 @@ def main():
     response = urllib2.urlopen(req)
     req = urllib2.Request(url, headers= header_dict)
     response = urllib2.urlopen(req)
-    price_page = response.read()
-    print price_page
+    return response
     
+def parse_content_level3(content):
+    page_content = content.read()
+    return re.findall(PRICE_PATTERN, page_content.strip())[0]
+
+def main():
+    open_page = get_page_content_level3()
+    extracted_content = parse_content_level3(open_page)
+    print extracted_content
+
 if __name__ == '__main__':
     main()
