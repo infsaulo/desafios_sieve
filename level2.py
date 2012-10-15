@@ -3,6 +3,30 @@
 import os.path
 import urllib2
 
+from xml.sax import make_parser
+from xml.sax.handler import ContentHandler
+
+import re
+
+PRICE_PATTERN = '.*(R\$ [0-9]+\.[0-9]+,[0-9]+).*'
+
+class Level2Handler(ContentHandler):
+    def __init__(self):
+        self.extracted_content = ''
+        self.is_div_element = False
+
+    def startElement(self, name, attrs):
+        if name == 'div':
+            self.is_div_element = True
+
+    def endElement(self, name):
+        if name == 'div':
+            self.is_div_element = False
+             
+    def characters(self, ch):
+        if self.is_div_element:
+            self.extracted_content += ch
+
 def set_up_cookie_stuff():
     COOKIEFILE = './cookies.txt'
 
@@ -37,7 +61,7 @@ def set_up_cookie_stuff():
             opener = ClientCookie.build_opener(ClientCookie.HTTPCookieProcessor(cj))
             ClientCookie.install_opener(opener)
 
-def main():
+def get_page_content_level2():
 
     set_up_cookie_stuff()
 
@@ -53,8 +77,22 @@ def main():
     response = urllib2.urlopen(req)
     req = urllib2.Request(url, headers= header_dict)
     response = urllib2.urlopen(req)
-    price_page = response.read()
-    print price_page
-    
+    return response
+
+def parse_content_level2(content):
+    parser = make_parser()
+    handler = Level2Handler()
+    parser.setContentHandler(handler)
+    try:
+        parser.parse(content)
+    except:
+        pass
+    return re.findall(PRICE_PATTERN, handler.extracted_content.strip())[0]
+
+def main():
+    open_page = get_page_content_level2()
+    extracted_content = parse_content_level2(open_page)
+    print extracted_content
+        
 if __name__ == '__main__':
     main()
