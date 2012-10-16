@@ -16,7 +16,8 @@ def main():
 	req.add_header('Cookie', 'cade-meu-cookie=\"esta aqui\"')
 	response = urllib2.urlopen(req)
 	page = response.read()
-	print re.findall(PRICE_PATTERN, page.strip())[0][0]
-	
+	extracted_content = re.findall(PRICE_PATTERN, page.strip())[0][0]
+	assert extracted_content == 'R$ 4 5 0 ,0 0'
+
 if __name__ == '__main__':
     main()

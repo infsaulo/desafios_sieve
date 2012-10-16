@@ -69,7 +69,7 @@ def parse_content_level3(content):
 def main():
     open_page = get_page_content_level3()
     extracted_content = parse_content_level3(open_page)
-    print extracted_content
+    assert extracted_content == 'R$ 499,00'
 
 if __name__ == '__main__':
     main()

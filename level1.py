@@ -48,7 +48,6 @@ def parse_content_level1(content):
 def main():
     open_page = get_page_content_level1()
     extracted_content = parse_content_level1(open_page)
-    print extracted_content
-
+    assert extracted_content == 'R$ 44,99'
 if __name__ == '__main__':
     main()
