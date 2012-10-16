@@ -93,5 +93,6 @@ def main():
     open_page = get_page_content_level2()
     extracted_content = parse_content_level2(open_page)
     assert extracted_content == 'R$ 3.999,00'   
+
 if __name__ == '__main__':
     main()
